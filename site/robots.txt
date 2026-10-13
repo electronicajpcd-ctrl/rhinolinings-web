@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /gracias/
+
+Sitemap: https://rhinolinings.com.mx/sitemap.xml

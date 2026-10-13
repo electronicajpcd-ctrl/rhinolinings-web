@@ -1,0 +1,41 @@
+name: Publicar en Hostgator
+
+# Cada push a main publica en el subdominio de prueba (staging).
+# Producción solo se publica a mano: Actions > Publicar en Hostgator > Run workflow > produccion.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      destino:
+        description: Dónde publicar
+        type: choice
+        options: [staging, produccion]
+        default: staging
+
+concurrency:
+  group: deploy-${{ github.event.inputs.destino || 'staging' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.destino || 'staging' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Evitar que Google indexe el sitio de prueba
+        if: ${{ (github.event.inputs.destino || 'staging') == 'staging' }}
+        run: |
+          printf 'User-agent: *\nDisallow: /\n' > site/robots.txt
+          printf '\n<IfModule mod_headers.c>\nHeader set X-Robots-Tag "noindex, nofollow"\n</IfModule>\n' >> site/.htaccess
+
+      - name: Subir archivos por FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./site/
+          server-dir: ${{ secrets.FTP_SERVER_DIR || './' }}
