@@ -139,9 +139,52 @@ $headers = [
 ];
 $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
-$sent = @mail($CONFIG['to'], $encodedSubject, $body, implode("\r\n", $headers), '-f' . $CONFIG['from']);
+$sent = false;
+$via = 'ninguno';
+
+// 1) SMTP autenticado (recomendado). La configuración la escribe la publicación automática
+//    en smtp-config.php a partir del secreto SMTP_PASSWORD de GitHub; no está en el repositorio.
+$smtpFile = __DIR__ . '/smtp-config.php';
+if (is_readable($smtpFile)) {
+    $smtp = include $smtpFile;
+    if (is_array($smtp) && !empty($smtp['pass'])) {
+        require_once __DIR__ . '/lib/PHPMailer/Exception.php';
+        require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
+        require_once __DIR__ . '/lib/PHPMailer/SMTP.php';
+        try {
+            $m = new PHPMailer\PHPMailer\PHPMailer(true);
+            $m->isSMTP();
+            $m->Host = $smtp['host'];
+            $m->Port = (int) $smtp['port'];
+            $m->SMTPSecure = $smtp['secure'];
+            $m->SMTPAuth = true;
+            $m->Username = $smtp['user'];
+            $m->Password = $smtp['pass'];
+            $m->Timeout = 15;
+            $m->CharSet = 'UTF-8';
+            $m->setFrom($smtp['user'], $CONFIG['from_name']);
+            foreach (array_filter(array_map('trim', explode(',', $CONFIG['to']))) as $addr) {
+                $m->addAddress($addr);
+            }
+            $m->Subject = $subject;
+            $m->Body = $body;
+            $m->isHTML(false);
+            $m->send();
+            $sent = true;
+            $via = 'smtp';
+        } catch (Exception $e) {
+            error_log('cita.php SMTP: ' . (isset($m) ? $m->ErrorInfo : $e->getMessage()));
+        }
+    }
+}
+
+// 2) Respaldo: mail() del servidor.
 if (!$sent) {
-    $sent = @mail($CONFIG['to'], $encodedSubject, $body, implode("\r\n", $headers));
+    $sent = @mail($CONFIG['to'], $encodedSubject, $body, implode("\r\n", $headers), '-f' . $CONFIG['from']);
+    if (!$sent) {
+        $sent = @mail($CONFIG['to'], $encodedSubject, $body, implode("\r\n", $headers));
+    }
+    if ($sent) { $via = 'mail'; }
 }
 
 // Respaldo en CSV (fuera de la carpeta pública).
@@ -155,9 +198,9 @@ $fh = @fopen($csv, 'a');
 if ($fh) {
     if (flock($fh, LOCK_EX)) {
         if ($isNew) {
-            fputcsv($fh, array_merge(['recibida', 'correo_enviado'], array_keys($d)));
+            fputcsv($fh, array_merge(['recibida', 'correo_enviado', 'via'], array_keys($d)));
         }
-        fputcsv($fh, array_merge([date('Y-m-d H:i:s'), $sent ? 'si' : 'no'], array_values($d)));
+        fputcsv($fh, array_merge([date('Y-m-d H:i:s'), $sent ? 'si' : 'no', $via], array_values($d)));
         flock($fh, LOCK_UN);
         $saved = true;
     }

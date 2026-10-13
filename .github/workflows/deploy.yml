@@ -30,12 +30,23 @@ jobs:
           printf 'User-agent: *\nDisallow: /\n' > site/robots.txt
           printf '\n<IfModule mod_headers.c>\nHeader set X-Robots-Tag "noindex, nofollow"\n</IfModule>\n' >> site/.htaccess
 
-      - name: Diagnóstico de correo (MX y SPF)
+      - name: Configurar envío de correo por SMTP
+        env:
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_USER: ${{ vars.SMTP_USER || 'citas@rhinolinings.com.mx' }}
+          SMTP_HOST: ${{ vars.SMTP_HOST || 'smtp.titan.email' }}
+          SMTP_PORT: ${{ vars.SMTP_PORT || '465' }}
         run: |
-          sudo apt-get -qq install -y dnsutils >/dev/null 2>&1 || true
-          echo "::warning::diag MX=$(dig +short MX rhinolinings.com.mx | tr '\n' ' ')"
-          echo "::warning::diag SPF=$(dig +short TXT rhinolinings.com.mx | grep -i spf | tr '\n' ' ')"
-          echo "::warning::diag A=$(dig +short A rhinolinings.com.mx | tr '\n' ' ') NS=$(dig +short NS rhinolinings.com.mx | tr '\n' ' ')"
+          if [ -n "$SMTP_PASSWORD" ]; then
+            P64=$(printf '%s' "$SMTP_PASSWORD" | base64 -w0)
+            cat > site/api/smtp-config.php <<PHP
+          <?php
+          return ['host' => '$SMTP_HOST', 'port' => $SMTP_PORT, 'secure' => 'ssl', 'user' => '$SMTP_USER', 'pass' => base64_decode('$P64')];
+          PHP
+            echo "SMTP configurado para $SMTP_USER"
+          else
+            echo "::warning::Sin secreto SMTP_PASSWORD: las citas se enviarán con mail() del servidor."
+          fi
 
       - name: Subir archivos por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5

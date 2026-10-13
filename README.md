@@ -61,15 +61,16 @@ En staging el workflow agrega `noindex` automáticamente, para que Google no ind
 
 ## 3. Citas por correo
 
-Cada cita la recibe `site/api/cita.php` (PHP, viene incluido en Hostgator) y la envía por correo.
+El correo de rhinolinings.com.mx está en **Titan** (MX `mx1.titan.email`). Por eso las citas se envían por **SMTP autenticado con la cuenta `citas@rhinolinings.com.mx` de Titan**: así pasan SPF/DKIM y no se pierden ni caen en spam.
 
-1. **cPanel → Cuentas de correo**: crea `citas@rhinolinings.com.mx`. Es el remitente; al ser del mismo dominio, el correo no cae en spam.
-2. Abre `site/api/cita.php` y revisa las primeras líneas:
-   ```php
-   'to'   => 'contacto@rhinolinings.com.mx',   // a quién le llegan (puedes poner varios separados por coma)
-   'from' => 'citas@rhinolinings.com.mx',      // la cuenta del paso 1
-   ```
-3. Publica y agenda **una cita de prueba** en el subdominio. Debe llegar un correo con asunto "Nueva cita: …". Revisa también la carpeta de spam la primera vez.
+1. En el panel de Titan (correo de Hostgator) crea la cuenta `citas@rhinolinings.com.mx`.
+2. En GitHub, en el environment `staging` (y luego en `produccion`), agrega el secreto **`SMTP_PASSWORD`** con la contraseña de esa cuenta de Titan.
+3. Vuelve a correr la publicación. El workflow genera `site/api/smtp-config.php` en el servidor con esos datos; ese archivo **no** está en el repositorio.
+4. Agenda una cita de prueba: debe llegar a `contacto@rhinolinings.com.mx` con asunto "Nueva cita: …".
+
+Opcionales (variables del environment): `SMTP_USER` (por defecto `citas@rhinolinings.com.mx`), `SMTP_HOST` (`smtp.titan.email`), `SMTP_PORT` (`465`).
+
+Si no existe `SMTP_PASSWORD`, `cita.php` intenta con `mail()` del servidor. Para que ese respaldo funcione con Titan, en cPanel → **Enrutamiento de correo** de rhinolinings.com.mx elige **Intercambiador de correo remoto**.
 
 Qué incluye el correo: nombre, WhatsApp con enlace directo para escribirle, vehículo y modelo, precio aceptado, día, hora, urgencia y el origen de la campaña (utm, o "Meta"/"Google Ads" si llega con fbclid/gclid).
 
