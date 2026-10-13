@@ -25,12 +25,16 @@ if (is_readable($cfg)) {
         try {
             $m->isSMTP(); $m->Host = $c['host']; $m->Port = $p[0]; $m->SMTPSecure = $p[1];
             $m->SMTPAuth = true; $m->Username = $c['user']; $m->Password = $c['pass']; $m->Timeout = 10;
+            $log = [];
+            $m->SMTPDebug = 2;
+            $m->Debugoutput = function ($str) use (&$log) { if (strpos($str, 'SERVER -> CLIENT') !== false) { $log[] = trim($str); } };
             $ok = $m->smtpConnect();
             echo "Login SMTP puerto " . $p[0] . ": " . ($ok ? "OK" : "falló") . "\n";
             $m->smtpClose();
         } catch (Exception $ex) {
-            echo "Login SMTP puerto " . $p[0] . ": ERROR " . $m->ErrorInfo . "\n";
+            echo "Login SMTP puerto " . $p[0] . ": ERROR " . $ex->getMessage() . "\n";
         }
+        foreach (array_slice($log, -4) as $l) { echo "    " . $l . "\n"; }
     }
 }
 
