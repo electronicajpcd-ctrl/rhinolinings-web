@@ -143,10 +143,11 @@ $sent = false;
 $via = 'ninguno';
 
 // 1) SMTP autenticado (recomendado). La configuración la escribe la publicación automática
-//    en smtp-config.php a partir del secreto SMTP_PASSWORD de GitHub; no está en el repositorio.
-$smtpFile = __DIR__ . '/smtp-config.php';
+//    en .htsmtp (JSON) a partir del secreto SMTP_PASSWORD de GitHub; no está en el repositorio.
+//    Apache bloquea por defecto los archivos que empiezan con ".ht", así que no se puede descargar.
+$smtpFile = __DIR__ . '/.htsmtp';
 if (is_readable($smtpFile)) {
-    $smtp = include $smtpFile;
+    $smtp = json_decode((string) file_get_contents($smtpFile), true);
     if (is_array($smtp) && !empty($smtp['pass'])) {
         require_once __DIR__ . '/lib/PHPMailer/Exception.php';
         require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';

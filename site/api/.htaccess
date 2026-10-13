@@ -1,0 +1,3 @@
+<Files ".htsmtp">
+  Require all denied
+</Files>

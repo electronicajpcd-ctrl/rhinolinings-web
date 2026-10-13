@@ -38,11 +38,7 @@ jobs:
           SMTP_PORT: ${{ vars.SMTP_PORT || '465' }}
         run: |
           if [ -n "$SMTP_PASSWORD" ]; then
-            P64=$(printf '%s' "$SMTP_PASSWORD" | base64 -w0)
-            cat > site/api/smtp-config.php <<PHP
-          <?php
-          return ['host' => '$SMTP_HOST', 'port' => $SMTP_PORT, 'secure' => 'ssl', 'user' => '$SMTP_USER', 'pass' => base64_decode('$P64')];
-          PHP
+            printf '%s' "$SMTP_PASSWORD" | python3 -c "import json,sys,os; print(json.dumps({'host':os.environ['SMTP_HOST'],'port':int(os.environ['SMTP_PORT']),'secure':'ssl','user':os.environ['SMTP_USER'],'pass':sys.stdin.read()}))" > site/api/.htsmtp
             echo "SMTP configurado para $SMTP_USER"
           else
             echo "::warning::Sin secreto SMTP_PASSWORD: las citas se enviarán con mail() del servidor."

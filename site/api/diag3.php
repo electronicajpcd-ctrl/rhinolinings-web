@@ -5,7 +5,7 @@ header('X-Robots-Tag: noindex');
 header('Cache-Control: no-store');
 if (hash('sha256', (string)($_GET['k'] ?? '')) !== 'b99160385f303ed594301f621680842fd61acc7fd40237774212cfec6917d63c') { http_response_code(404); exit; }
 
-echo "diag v3 · PHP " . PHP_VERSION . "\n";
+echo "diag v4 · PHP " . PHP_VERSION . "\n";
 foreach ([['ssl://smtp.titan.email', 465], ['smtp.titan.email', 587], ['smtp.titan.email', 25]] as $t) {
     $e = 0; $s = '';
     $fp = @fsockopen($t[0], $t[1], $e, $s, 8);
@@ -13,10 +13,10 @@ foreach ([['ssl://smtp.titan.email', 465], ['smtp.titan.email', 587], ['smtp.tit
     if ($fp) { fclose($fp); }
 }
 
-$cfg = __DIR__ . '/smtp-config.php';
-echo "smtp-config.php: " . (is_readable($cfg) ? "existe" : "NO existe") . "\n";
+$cfg = __DIR__ . '/.htsmtp';
+echo ".htsmtp: " . (is_readable($cfg) ? "existe, actualizado " . date("Y-m-d H:i:s", filemtime($cfg)) : "NO existe") . "\n";
 if (is_readable($cfg)) {
-    $c = include $cfg;
+    $c = json_decode((string) file_get_contents($cfg), true);
     echo "Usuario SMTP: " . $c['user'] . " | host " . $c['host'] . ":" . $c['port'] . " | contraseña de " . strlen($c['pass']) . " caracteres\n";
     require_once __DIR__ . '/lib/PHPMailer/Exception.php';
     require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
