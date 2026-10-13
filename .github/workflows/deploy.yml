@@ -30,6 +30,16 @@ jobs:
           printf 'User-agent: *\nDisallow: /\n' > site/robots.txt
           printf '\n<IfModule mod_headers.c>\nHeader set X-Robots-Tag "noindex, nofollow"\n</IfModule>\n' >> site/.htaccess
 
+      - name: Probar conexión al servidor FTP
+        env:
+          HOST: ${{ secrets.FTP_SERVER }}
+        run: |
+          for h in "$HOST" sh00022.hostgator.mx; do
+            ip=$(getent hosts "$h" | awk '{print $1}' | head -1)
+            if timeout 15 bash -c "echo > /dev/tcp/$h/21" 2>/dev/null; then r=abierto; else r=sin_respuesta; fi
+            echo "::warning::diag host=$( [ "$h" = "$HOST" ] && echo FTP_SERVER || echo "$h" ) ip=${ip:-no_resuelve} puerto21=$r"
+          done
+
       - name: Subir archivos por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
