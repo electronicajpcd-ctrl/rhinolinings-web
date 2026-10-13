@@ -82,6 +82,14 @@ Si el envío falla, el cliente ve un aviso para intentar de nuevo o escribir por
 
 > Más adelante, para pasar a GoHighLevel, basta con agregar en `cita.php` un envío al webhook de entrada de GHL; el formulario no cambia.
 
+### Google Sheets (opcional)
+
+Además del correo, cada cita puede agregarse como fila en una hoja de Google Sheets.
+
+1. Sigue las instrucciones al inicio de `integraciones/google-sheets.gs` (se pega en Extensiones → Apps Script de la hoja y se publica como aplicación web).
+2. En GitHub agrega los secretos `SHEETS_URL` (la URL `/exec`) y `SHEETS_TOKEN` (la clave que pusiste en el script).
+3. Vuelve a publicar y haz una cita de prueba: debe aparecer una fila en la pestaña "Citas".
+
 ## 4. Píxel de Meta y Google Ads
 
 - Pega el código base del **Píxel de Meta** y de la **etiqueta de Google** en el `<head>` de `site/index.html` y de `site/gracias/index.html` (hay un comentario que marca el lugar).

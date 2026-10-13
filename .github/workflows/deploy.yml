@@ -44,6 +44,18 @@ jobs:
             echo "::warning::Sin secreto SMTP_PASSWORD: las citas se enviarán con mail() del servidor."
           fi
 
+      - name: Configurar Google Sheets
+        env:
+          SHEETS_URL: ${{ secrets.SHEETS_URL }}
+          SHEETS_TOKEN: ${{ secrets.SHEETS_TOKEN }}
+        run: |
+          if [ -n "$SHEETS_URL" ]; then
+            python3 -c "import json,os; print(json.dumps({'url':os.environ['SHEETS_URL'].strip(),'token':os.environ.get('SHEETS_TOKEN','').strip()}))" > site/api/.htsheets
+            echo "Google Sheets configurado"
+          else
+            echo "Sin SHEETS_URL: las citas no se envían a Google Sheets."
+          fi
+
       - name: Subir archivos por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

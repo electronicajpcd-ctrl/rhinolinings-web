@@ -208,4 +208,27 @@ if ($fh) {
     fclose($fh);
 }
 
-respond($sent || $saved, ($sent || $saved) ? 200 : 500);
+// Google Sheets (opcional): si existe .htsheets, se agrega una fila en la hoja.
+$sheetsFile = __DIR__ . '/.htsheets';
+$sheeted = false;
+if (is_readable($sheetsFile) && function_exists('curl_init')) {
+    $gs = json_decode((string) file_get_contents($sheetsFile), true);
+    if (is_array($gs) && !empty($gs['url'])) {
+        $row = array_merge(['token' => $gs['token'] ?? '', 'recibida' => date('Y-m-d H:i:s'), 'correo_enviado' => $sent ? 'si' : 'no'], $d);
+        $ch = curl_init($gs['url']);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($row, JSON_UNESCAPED_UNICODE),
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT => 8,
+        ]);
+        $res = curl_exec($ch);
+        $sheeted = $res !== false && strpos((string) $res, '"ok":true') !== false;
+        if (!$sheeted) { error_log('cita.php Sheets: ' . curl_error($ch) . ' ' . substr((string) $res, 0, 200)); }
+        curl_close($ch);
+    }
+}
+
+respond($sent || $saved || $sheeted, ($sent || $saved || $sheeted) ? 200 : 500);

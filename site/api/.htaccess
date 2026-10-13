@@ -1,3 +1,6 @@
 <Files ".htsmtp">
   Require all denied
 </Files>
+<Files ".htsheets">
+  Require all denied
+</Files>

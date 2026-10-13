@@ -24,3 +24,4 @@ a{color:#F4F1EA}a:hover{color:#FFFFFF}
 .rl-check path{animation:none !important;stroke-dashoffset:0}
 .rl-btn:hover{transform:none}.rl-btn::after{display:none}
 }
+::selection{background:#C8201A;color:#FFFFFF}

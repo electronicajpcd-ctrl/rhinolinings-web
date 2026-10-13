@@ -3,3 +3,4 @@ Thumbs.db
 *.log
 citas-*.csv
 site/api/.htsmtp
+site/api/.htsheets
