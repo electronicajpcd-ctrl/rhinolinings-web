@@ -1,7 +1,8 @@
 <?php
 // Diagnóstico temporal del envío de correo. Se elimina después de resolver el problema.
 header('Content-Type: text/plain; charset=utf-8');
-header('X-Robots-Tag: noindex');\nheader('Cache-Control: no-store');
+header('X-Robots-Tag: noindex');
+header('Cache-Control: no-store');
 if (hash('sha256', (string)($_GET['k'] ?? '')) !== 'b99160385f303ed594301f621680842fd61acc7fd40237774212cfec6917d63c') { http_response_code(404); exit; }
 
 echo "diag v3 · PHP " . PHP_VERSION . "\n";
