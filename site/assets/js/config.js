@@ -9,9 +9,9 @@ window.RL_CONFIG = {
   thanksUrl: 'gracias/',
   timezone: 'America/Mexico_City',
   prices: {
+    'Van o caja cerrada': { label: 'desde $8,000 MXN + IVA', amount: 8000 },
     'Pickup caja corta': { label: 'desde $9,000 MXN + IVA', amount: 9000 },
     'Pickup full size': { label: 'desde $10,000 MXN + IVA', amount: 10000 },
-    'Van o caja cerrada': { label: 'desde $8,000 MXN + IVA', amount: 8000 },
     'Flotilla (3+)': { label: 'Precio especial', amount: null, fleet: true }
   },
   // Horario de citas.

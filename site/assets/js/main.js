@@ -89,7 +89,7 @@
   var vehicleNames = Object.keys(prices);
   var dows = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
   var mons = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-  var state = { vehicle: vehicleNames[0], day: null, time: null };
+  var state = { vehicle: vehicleNames.indexOf('Pickup caja corta') >= 0 ? 'Pickup caja corta' : vehicleNames[0], day: null, time: null };
 
   var elVehicles = document.getElementById('rl-vehicles');
   var elDays = document.getElementById('rl-days');
