@@ -5,7 +5,7 @@ header('X-Robots-Tag: noindex');
 header('Cache-Control: no-store');
 if (hash('sha256', (string)($_GET['k'] ?? '')) !== 'b99160385f303ed594301f621680842fd61acc7fd40237774212cfec6917d63c') { http_response_code(404); exit; }
 
-echo "diag v4 · PHP " . PHP_VERSION . "\n";
+echo "diag v5 · PHP " . PHP_VERSION . "\n";
 foreach ([['ssl://smtp.titan.email', 465], ['smtp.titan.email', 587], ['smtp.titan.email', 25]] as $t) {
     $e = 0; $s = '';
     $fp = @fsockopen($t[0], $t[1], $e, $s, 8);
@@ -17,20 +17,22 @@ $cfg = __DIR__ . '/.htsmtp';
 echo ".htsmtp: " . (is_readable($cfg) ? "existe, actualizado " . date("Y-m-d H:i:s", filemtime($cfg)) : "NO existe") . "\n";
 if (is_readable($cfg)) {
     $c = json_decode((string) file_get_contents($cfg), true);
+    $pw = $c['pass'];
+    echo "Contraseña: letras=" . preg_match_all('/[A-Za-z]/', $pw) . " números=" . preg_match_all('/[0-9]/', $pw) . " símbolos=" . preg_match_all('/[^A-Za-z0-9\s]/u', $pw) . " espacios=" . preg_match_all('/\s/u', $pw) . " no_ascii=" . preg_match_all('/[^\x00-\x7F]/', $pw) . " primera=" . (ctype_alpha($pw[0]) ? 'letra' : (ctype_digit($pw[0]) ? 'número' : 'símbolo')) . "\n";
     echo "Usuario SMTP: " . $c['user'] . " | host " . $c['host'] . ":" . $c['port'] . " | contraseña de " . strlen($c['pass']) . " caracteres\n";
     require_once __DIR__ . '/lib/PHPMailer/Exception.php';
     require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
     require_once __DIR__ . '/lib/PHPMailer/SMTP.php';
-    foreach ([['ssl://' . $c['host'], 465, false], [$c['host'], 587, true]] as $p) {
+    foreach ([['ssl://' . $c['host'], 465, false, 'LOGIN'], ['ssl://' . $c['host'], 465, false, 'PLAIN'], [$c['host'], 587, true, 'LOGIN']] as $p) {
         $smtp = new PHPMailer\PHPMailer\SMTP();
         $smtp->Timeout = 10;
         $step = 'conectar';
         $ok = $smtp->connect($p[0], $p[1], 10);
         if ($ok) { $step = 'saludo'; $ok = $smtp->hello('rhinolinings.com.mx'); }
         if ($ok && $p[2]) { $step = 'starttls'; $ok = $smtp->startTLS() && $smtp->hello('rhinolinings.com.mx'); }
-        if ($ok) { $step = 'login'; $ok = $smtp->authenticate($c['user'], $c['pass'], 'LOGIN'); }
+        if ($ok) { $step = 'login'; $ok = $smtp->authenticate($c['user'], $c['pass'], $p[3]); }
         $err = $smtp->getError();
-        echo "SMTP puerto " . $p[1] . ": " . ($ok ? "LOGIN OK" : "falló en '" . $step . "' -> " . trim(($err['error'] ?? '') . ' | ' . ($err['smtp_code'] ?? '') . ' ' . ($err['detail'] ?? ''))) . "\n";
+        echo "SMTP puerto " . $p[1] . " " . $p[3] . ": " . ($ok ? "LOGIN OK" : "falló en '" . $step . "' -> " . trim(($err['error'] ?? '') . ' | ' . ($err['smtp_code'] ?? '') . ' ' . ($err['detail'] ?? ''))) . "\n";
         $smtp->quit(); $smtp->close();
     }
 }
