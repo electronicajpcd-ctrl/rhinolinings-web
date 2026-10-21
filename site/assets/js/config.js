@@ -17,10 +17,10 @@ window.RL_CONFIG = {
     bordesOnlyPrice: 4000,
     vehicles: [
       {
-        id: 'pickup-corta', group: 'pickup', name: 'Pickup caja corta',
+        id: 'pickup-full', group: 'pickup', name: 'Pickup full size / caja americana',
         options: [
-          { id: 'sin-bordes', name: 'Caja sin bordes', price: 9000 },
-          { id: 'con-bordes', name: 'Caja con bordes', price: 9500 }
+          { id: 'sin-bordes', name: 'Caja sin bordes', price: 11000 },
+          { id: 'con-bordes', name: 'Caja con bordes', price: 11500 }
         ]
       },
       {
@@ -31,18 +31,10 @@ window.RL_CONFIG = {
         ]
       },
       {
-        id: 'pickup-full', group: 'pickup', name: 'Pickup full size / caja americana',
+        id: 'pickup-corta', group: 'pickup', name: 'Pickup caja corta',
         options: [
-          { id: 'sin-bordes', name: 'Caja sin bordes', price: 11000 },
-          { id: 'con-bordes', name: 'Caja con bordes', price: 11500 }
-        ]
-      },
-      {
-        id: 'van-corta', group: 'van', name: 'Van corta (caja cerrada)',
-        options: [
-          { id: 'piso', name: 'Solo piso', price: 8000 },
-          { id: 'piso-salpicaderas', name: 'Piso + salpicaderas', detail: 'Incluye los cubre-llantas interiores', price: 8500 },
-          { id: 'completa', name: 'Interior completo', detail: 'Piso, paredes y techo', price: 12000 }
+          { id: 'sin-bordes', name: 'Caja sin bordes', price: 9000 },
+          { id: 'con-bordes', name: 'Caja con bordes', price: 9500 }
         ]
       },
       {
@@ -51,6 +43,14 @@ window.RL_CONFIG = {
           { id: 'piso', name: 'Solo piso', price: 9000 },
           { id: 'piso-salpicaderas', name: 'Piso + salpicaderas', detail: 'Incluye los cubre-llantas interiores', price: 9500 },
           { id: 'completa', name: 'Interior completo', detail: 'Piso, paredes y techo', price: 14000 }
+        ]
+      },
+      {
+        id: 'van-corta', group: 'van', name: 'Van corta (caja cerrada)',
+        options: [
+          { id: 'piso', name: 'Solo piso', price: 8000 },
+          { id: 'piso-salpicaderas', name: 'Piso + salpicaderas', detail: 'Incluye los cubre-llantas interiores', price: 8500 },
+          { id: 'completa', name: 'Interior completo', detail: 'Piso, paredes y techo', price: 12000 }
         ]
       },
       { id: 'flotilla', group: 'fleet', name: 'Flotilla (3 o más unidades)', fleet: true }
