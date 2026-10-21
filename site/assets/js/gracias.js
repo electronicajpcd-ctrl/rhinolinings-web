@@ -18,12 +18,15 @@
   if (!has) return;
 
   $('rl-vehicle').textContent = d.vehicle || '';
+  $('rl-coverage').textContent = d.coverage || '';
+  $('rl-coverage').previousElementSibling.hidden = !d.coverage;
+  $('rl-coverage').hidden = !d.coverage;
   $('rl-price').textContent = d.price || '';
   $('rl-day').textContent = d.day || '';
   $('rl-time').textContent = (d.time || '') + ' h';
-  $('rl-price-note').textContent = d.fleet
-    ? 'Te enviamos la cotización por volumen antes de tu cita.'
-    : 'El precio final se confirma al revisar tu vehículo en el taller.';
+  var notes = Array.isArray(d.notes) ? d.notes.slice() : [];
+  if (d.fleet) notes.unshift('Te enviamos la cotización por volumen antes de tu cita.');
+  $('rl-price-note').textContent = notes.length ? notes.join(' ') : 'Es el precio que pagarás en el taller.';
 
   if (d.date && /^\d{8}$/.test(d.date)) {
     var hm = String(d.time).split(':');
@@ -32,10 +35,10 @@
     var start = d.date + 'T' + pad(h) + pad(m) + '00';
     var end = d.date + 'T' + pad(h + 1) + pad(m) + '00';
     var url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-      + '&text=' + encodeURIComponent('Cita Rhino Linings GDL · ' + d.vehicle)
+      + '&text=' + encodeURIComponent('Cita Rhino Linings GDL · ' + d.vehicle + (d.coverage ? ' · ' + d.coverage : ''))
       + '&dates=' + start + '/' + end
       + '&ctz=America/Mexico_City'
-      + '&details=' + encodeURIComponent('Evaluación y aplicación de recubrimiento Rhino Linings. Precio aceptado: ' + d.price + '. Tel. 33 1314 2064.')
+      + '&details=' + encodeURIComponent('Aplicación de recubrimiento Rhino Linings. Precio aceptado: ' + d.price + '. Tel. 33 1314 2064.')
       + '&location=' + encodeURIComponent(ADDRESS);
     var cal = $('rl-cal');
     cal.href = url;

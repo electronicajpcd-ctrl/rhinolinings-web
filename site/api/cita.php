@@ -75,7 +75,7 @@ $d = [
     'modelo'          => field('modelo', 120),
     'urgencia'        => field('urgencia', 60),
     'vehiculo'        => field('vehiculo', 60),
-    'precio'          => field('precio', 60),
+    'precio'          => field('precio', 80),
     'precio_aceptado' => field('precio_aceptado', 5),
     'fecha'           => field('fecha', 10),
     'fecha_texto'     => field('fecha_texto', 40),
@@ -88,6 +88,14 @@ $d = [
     'utm_term'        => field('utm_term', 150),
     'fbclid'          => field('fbclid', 300),
     'gclid'           => field('gclid', 300),
+    // Cotizador (al final para no desacomodar el CSV existente).
+    'cobertura'       => field('cobertura', 80),
+    'material'        => field('material', 80),
+    'extras'          => field('extras', 120),
+    'factura'         => field('factura', 5),
+    'subtotal'        => preg_replace('/[^0-9.]/', '', field('subtotal', 12)),
+    'iva'             => preg_replace('/[^0-9.]/', '', field('iva', 12)),
+    'total'           => preg_replace('/[^0-9.]/', '', field('total', 12)),
 ];
 
 // Validación mínima.
@@ -105,23 +113,36 @@ $origen = $d['utm_source'] !== '' ? $d['utm_source'] . ($d['utm_campaign'] !== '
 if ($d['utm_source'] === '' && $d['fbclid'] !== '') { $origen = 'Meta (fbclid)'; }
 if ($d['utm_source'] === '' && $d['gclid'] !== '') { $origen = 'Google Ads (gclid)'; }
 
-$subject = 'Nueva cita: ' . $d['vehiculo'] . ' · ' . $d['fecha_texto'] . ' ' . $d['hora'] . ' · ' . $d['nombre'];
+$fmt0 = function ($n) { return '$' . number_format((float) $n, 0, '.', ','); };
+$subject = 'Nueva cita: ' . $d['vehiculo'] . ($d['total'] !== '' ? ' · ' . $fmt0($d['total']) : '') . ' · ' . $d['fecha_texto'] . ' ' . $d['hora'] . ' · ' . $d['nombre'];
 
+$fmt = function ($n) { return $n === '' ? '' : '$' . number_format((float) $n, 0, '.', ','); };
 $lines = [
     'Nueva cita agendada desde el sitio web',
     '',
     'Cliente:     ' . $d['nombre'],
     'WhatsApp:    ' . $d['whatsapp'] . '  →  https://wa.me/' . $wa,
     'Vehículo:    ' . $d['vehiculo'] . ($d['modelo'] !== '' ? ' (' . $d['modelo'] . ')' : ''),
-    'Precio:      ' . $d['precio'],
-    'Aceptó precio: Sí',
-    '',
-    'Día:         ' . $d['fecha_texto'] . ' (' . $d['fecha'] . ')',
-    'Hora:        ' . $d['hora'] . ' h',
-    'Urgencia:    ' . $d['urgencia'],
-    '',
-    'Origen:      ' . $origen,
 ];
+if ($d['cobertura'] !== '') { $lines[] = 'Servicio:    ' . $d['cobertura']; }
+if ($d['material'] !== '')  { $lines[] = 'Material:    ' . $d['material']; }
+if ($d['extras'] !== '')    { $lines[] = 'Extras:      ' . $d['extras'] . ' (cotizar en taller)'; }
+if ($d['factura'] !== '')   { $lines[] = 'Factura:     ' . $d['factura']; }
+$lines[] = '';
+if ($d['total'] !== '') {
+    $lines[] = 'Subtotal:    ' . $fmt($d['subtotal']);
+    if ($d['factura'] === 'Sí') { $lines[] = 'IVA 16%:     ' . $fmt($d['iva']); }
+    $lines[] = 'TOTAL:       ' . $fmt($d['total']) . ' MXN';
+} else {
+    $lines[] = 'Precio:      ' . $d['precio'];
+}
+$lines[] = 'Aceptó precio: Sí';
+$lines[] = '';
+$lines[] = 'Día:         ' . $d['fecha_texto'] . ' (' . $d['fecha'] . ')';
+$lines[] = 'Hora:        ' . $d['hora'] . ' h';
+$lines[] = '';
+$lines[] = 'Origen:      ' . $origen;
+
 foreach (['utm_medium', 'utm_content', 'utm_term'] as $k) {
     if ($d[$k] !== '') { $lines[] = str_pad($k . ':', 13) . $d[$k]; }
 }

@@ -37,7 +37,15 @@ var COLUMNAS = [
   ['fbclid', 'fbclid'],
   ['gclid', 'gclid'],
   ['pagina', 'Página'],
-  ['correo_enviado', 'Correo enviado']
+  ['correo_enviado', 'Correo enviado'],
+  // Cotizador (columnas nuevas al final para no mover las anteriores)
+  ['cobertura', 'Servicio'],
+  ['material', 'Material'],
+  ['extras', 'Extras'],
+  ['factura', 'Factura'],
+  ['subtotal', 'Subtotal'],
+  ['iva', 'IVA'],
+  ['total', 'Total']
 ];
 
 function doPost(e) {
@@ -56,10 +64,10 @@ function doPost(e) {
   try {
     var libro = SpreadsheetApp.getActiveSpreadsheet();
     var hoja = libro.getSheetByName(HOJA) || libro.insertSheet(HOJA);
-    if (hoja.getLastRow() === 0) {
-      hoja.appendRow(COLUMNAS.map(function (c) { return c[1]; }));
+    // Encabezados: se escriben si la hoja está vacía o si faltan columnas nuevas.
+    if (hoja.getLastRow() === 0 || hoja.getLastColumn() < COLUMNAS.length) {
+      hoja.getRange(1, 1, 1, COLUMNAS.length).setValues([COLUMNAS.map(function (c) { return c[1]; })]).setFontWeight('bold');
       hoja.setFrozenRows(1);
-      hoja.getRange(1, 1, 1, COLUMNAS.length).setFontWeight('bold');
     }
     hoja.appendRow(COLUMNAS.map(function (c) {
       var v = data[c[0]];
