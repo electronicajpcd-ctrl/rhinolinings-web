@@ -30,6 +30,12 @@ jobs:
           printf 'User-agent: *\nDisallow: /\n' > site/robots.txt
           printf '\n<IfModule mod_headers.c>\nHeader set X-Robots-Tag "noindex, nofollow"\n</IfModule>\n' >> site/.htaccess
 
+      - name: Versionar CSS y JS (evita que el navegador use archivos viejos en caché)
+        run: |
+          V="${GITHUB_SHA::8}"
+          find site -name '*.html' -exec sed -i -E "s#((src|href)=\"[^\"?]+\.(js|css))\"#\1?v=$V\"#g" {} +
+          grep -rhoE '(src|href)="[^"]+\?v=[^"]+"' site --include=*.html
+
       - name: Configurar envío de correo por SMTP
         env:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
