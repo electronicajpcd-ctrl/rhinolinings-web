@@ -30,6 +30,28 @@ jobs:
           printf 'User-agent: *\nDisallow: /\n' > site/robots.txt
           printf '\n<IfModule mod_headers.c>\nHeader set X-Robots-Tag "noindex, nofollow"\n</IfModule>\n' >> site/.htaccess
 
+      - name: Producción — forzar https, quitar www y mandar páginas viejas al inicio
+        if: ${{ github.event.inputs.destino == 'produccion' }}
+        run: |
+          cat > /tmp/prod.htaccess <<'HT'
+          <IfModule mod_rewrite.c>
+            RewriteEngine On
+            # Certificados de cPanel (AutoSSL) sin redirección
+            RewriteRule ^\.well-known/ - [L]
+            # https y sin www
+            RewriteCond %{HTTPS} !=on [OR]
+            RewriteCond %{HTTP_HOST} ^www\. [NC]
+            RewriteRule ^ https://rhinolinings.com.mx%{REQUEST_URI} [L,R=301]
+            # Páginas del sitio anterior (WordPress) que ya no existen: 301 al inicio
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule ^ / [L,R=301]
+          </IfModule>
+          HT
+          sed -i 's/^          //' /tmp/prod.htaccess
+          cat /tmp/prod.htaccess site/.htaccess > /tmp/full.htaccess && mv /tmp/full.htaccess site/.htaccess
+          cat site/.htaccess
+
       - name: Versionar CSS y JS (evita que el navegador use archivos viejos en caché)
         run: |
           V="${GITHUB_SHA::8}"

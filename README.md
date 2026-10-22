@@ -97,14 +97,15 @@ Además del correo, cada cita puede agregarse como fila en una hoja de Google Sh
 
 ## 5. Pasar a producción (rhinolinings.com.mx)
 
-1. **Respalda el WordPress actual**: cPanel → Copia de seguridad (archivos + base de datos).
-2. Mueve los archivos de WordPress de la carpeta del dominio a una carpeta de respaldo, por ejemplo `wp-respaldo/`.
-3. Crea otra cuenta FTP cuyo directorio sea **la carpeta del dominio** (`public_html` si es el dominio principal del hosting, o su propia carpeta si es un dominio adicional).
-4. En GitHub crea el environment `produccion` con los mismos 4 secretos, pero de esa cuenta.
-5. **Actions → Publicar en Hostgator → Run workflow → produccion**.
-6. Ya con https funcionando, descomenta en `site/.htaccess` el bloque "Forzar HTTPS".
+1. **Respaldo del WordPress actual:** cPanel → Copia de seguridad → descarga el respaldo de la carpeta de inicio y la base de datos del sitio.
+2. **Saca el WordPress de la carpeta del dominio:** en el Administrador de archivos, mueve todo el contenido de la carpeta del dominio (ver *Dominios* en cPanel para saber cuál es) a una carpeta **fuera** de `public_html`, por ejemplo `/home/USUARIO/wp-respaldo-rhino/`. No la dejes dentro de `public_html`: quedaría visible en internet.
+3. **Cuenta FTP de producción:** cPanel → Cuentas FTP → `deploy-prod@rhinolinings.com.mx`, con directorio = la carpeta del dominio.
+4. **GitHub → Settings → Environments → New environment `produccion`** con los mismos secretos que `staging`: `FTP_SERVER` (sh00022.hostgator.mx), `FTP_USERNAME` y `FTP_PASSWORD` (los de la cuenta nueva), `SMTP_PASSWORD`, `SHEETS_URL`, `SHEETS_TOKEN`.
+5. **Actions → Publicar en Hostgator → Run workflow → produccion.**
 
-Los push a `main` siguen publicando solo en staging. Producción siempre es manual.
+Al publicar en producción, el workflow agrega solo: redirección a https y sin www, y 301 al inicio para cualquier página vieja de WordPress que ya no exista (anuncios o enlaces viejos no dan error). No agrega `noindex`.
+
+Los push a `main` siguen publicando solo en staging. Producción siempre es manual: después de cada cambio aprobado en staging, se vuelve a correr el paso 5.
 
 ## 6. Cambios frecuentes
 
