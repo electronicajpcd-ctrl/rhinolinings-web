@@ -96,6 +96,8 @@ $d = [
     'subtotal'        => preg_replace('/[^0-9.]/', '', field('subtotal', 12)),
     'iva'             => preg_replace('/[^0-9.]/', '', field('iva', 12)),
     'total'           => preg_replace('/[^0-9.]/', '', field('total', 12)),
+    'descuento'       => preg_replace('/[^0-9.]/', '', field('descuento', 12)),
+    'promocion'       => field('promocion', 80),
 ];
 
 // Validación mínima.
@@ -127,11 +129,12 @@ $lines = [
 if ($d['cobertura'] !== '') { $lines[] = 'Servicio:    ' . $d['cobertura']; }
 if ($d['material'] !== '')  { $lines[] = 'Material:    ' . $d['material']; }
 if ($d['extras'] !== '')    { $lines[] = 'Extras:      ' . $d['extras'] . ' (cotizar en taller)'; }
-if ($d['factura'] !== '')   { $lines[] = 'Factura:     ' . $d['factura']; }
 $lines[] = '';
 if ($d['total'] !== '') {
-    $lines[] = 'Subtotal:    ' . $fmt($d['subtotal']);
-    if ($d['factura'] === 'Sí') { $lines[] = 'IVA 16%:     ' . $fmt($d['iva']); }
+    if ($d['descuento'] !== '') {
+        $lines[] = 'Precio lista: ' . $fmt($d['subtotal']);
+        $lines[] = 'Descuento:   -' . $fmt($d['descuento']) . ' (' . $d['promocion'] . ')';
+    }
     $lines[] = 'TOTAL:       ' . $fmt($d['total']) . ' MXN';
 } else {
     $lines[] = 'Precio:      ' . $d['precio'];

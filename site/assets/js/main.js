@@ -24,6 +24,47 @@
     if (any) { found.landing = window.location.href; store('rl-origen', JSON.stringify(found)); }
   })();
 
+  /* ---------- Promoción (franja, contador y precios con descuento) ---------- */
+  (function promo() {
+    var P = (CFG.quote || {}).promo;
+    if (!P || !P.active || !P.percent) return;
+    var start = new Date(P.start).getTime(), end = new Date(P.end).getTime();
+    if (isNaN(end)) return;
+    var api = {
+      name: P.name || 'Promoción', percent: P.percent, lastDayText: P.lastDayText || '',
+      on: function () { var n = Date.now(); return (isNaN(start) || n >= start) && n < end; },
+      dayOk: function (iso) { return new Date(iso + 'T00:00:00-06:00').getTime() < end; },
+      apply: function (n) { return n - Math.round(n * P.percent / 100); }
+    };
+    window.RL_PROMO = api;
+    if (!api.on()) return;
+
+    function fmt(n) { return '$' + Math.round(n).toLocaleString('es-MX'); }
+    Array.prototype.forEach.call(document.querySelectorAll('[data-price]'), function (el) {
+      var n = parseFloat(el.getAttribute('data-price'));
+      if (!n) return;
+      el.innerHTML = '<s class="rl-old">' + fmt(n) + '</s> <span class="rl-new">' + fmt(api.apply(n)) + '</span>';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-promo]'), function (el) { el.hidden = false; });
+    document.documentElement.classList.add('rl-has-promo');
+
+    var clocks = document.querySelectorAll('[data-countdown]');
+    function pad2(n) { return ('0' + n).slice(-2); }
+    function tick() {
+      var left = Math.max(0, end - Date.now());
+      if (!left) {
+        Array.prototype.forEach.call(document.querySelectorAll('[data-promo]'), function (el) { el.hidden = true; });
+        clearInterval(timer);
+        return;
+      }
+      var s = Math.floor(left / 1000), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+      var html = (d ? '<b>' + d + '</b>d ' : '') + '<b>' + pad2(h) + '</b>h <b>' + pad2(m) + '</b>m <b>' + pad2(sec) + '</b>s';
+      Array.prototype.forEach.call(clocks, function (c) { c.innerHTML = html; });
+    }
+    var timer = setInterval(tick, 1000);
+    tick();
+  })();
+
   /* ---------- Menú móvil ---------- */
   var burger = document.getElementById('rl-burger');
   var panel = document.getElementById('rl-mobile-menu');
@@ -87,7 +128,7 @@
 
   var Q = CFG.quote || {};
   var VEH = Q.vehicles || [];
-  var IVA = typeof Q.ivaRate === 'number' ? Q.ivaRate : 0.16;
+  var PROMO = window.RL_PROMO;
   var PLASTIC = Q.plasticFee || 0;
   var BORDES = Q.bordesOnlyPrice || 0;
   var dows = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -95,7 +136,7 @@
   var mons = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
   var st = {
-    vehicle: null, option: null, material: null, extras: [], factura: null,
+    vehicle: null, option: null, material: null, extras: [], search: '',
     units: null, accepted: false, day: null, time: null,
     name: '', phone: '', model: '', step: 'vehicle', history: []
   };
@@ -128,13 +169,41 @@
     var base = o.price;
     var plastic = st.material === 'plastico' ? PLASTIC : 0;
     var subtotal = base + plastic;
-    var iva = st.factura === 'si' ? Math.round(subtotal * IVA) : 0;
-    return { base: base, plastic: plastic, subtotal: subtotal, iva: iva, total: subtotal + iva };
+    var promo = PROMO && PROMO.on() && (!st.day || PROMO.dayOk(st.day.iso));
+    var discount = promo ? Math.round(subtotal * PROMO.percent / 100) : 0;
+    return { base: base, plastic: plastic, subtotal: subtotal, discount: discount, total: subtotal - discount };
+  }
+  function strike(n) {
+    // Precio con descuento de la promo (para las tarjetas de opciones).
+    if (!(PROMO && PROMO.on())) return money(n);
+    return '<s class="rl-old">' + money(n) + '</s> <span class="rl-new">' + money(PROMO.apply(n)) + '</span>';
+  }
+  function norm(t) { return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' '); }
+  function searchModels(q) {
+    var words = norm(q).split(/\s+/).filter(Boolean);
+    if (!words.length) return [];
+    var out = [];
+    VEH.forEach(function (v) {
+      (v.models || []).forEach(function (m) {
+        var n = ' ' + norm(m) + ' ';
+        if (words.every(function (w) { return n.indexOf(w) >= 0; })) out.push({ model: m, v: v });
+      });
+    });
+    return out.slice(0, 6);
+  }
+  function searchResults() {
+    var q = st.search.trim();
+    if (q.length < 2) return '';
+    var r = searchModels(q);
+    if (!r.length) return '<p class="rl-find-none">No lo encontramos. Elige abajo el más parecido; lo confirmamos en el taller.</p>';
+    return r.map(function (x) {
+      return '<button type="button" class="rl-find-hit" data-key="vehicle" data-value="' + x.v.id + '"><span>' + esc(x.model) + '</span><span class="rl-find-cat">' + esc(x.v.name) + ' →</span></button>';
+    }).join('');
   }
 
   function flow() {
     if (isFleet()) return ['vehicle', 'units', 'schedule'];
-    return ['vehicle', 'coverage', 'material', 'extras', 'factura', 'summary', 'schedule'];
+    return ['vehicle', 'coverage', 'material', 'extras', 'summary', 'schedule'];
   }
 
   function go(step) {
@@ -168,20 +237,23 @@
   /* ----- pasos ----- */
   var views = {
     vehicle: function () {
-      var h = header('¿Qué vehículo quieres proteger?', '¿No sabes cuál es? Elige el más parecido; lo confirmamos en el taller.');
+      var h = header('¿Qué vehículo quieres proteger?', '');
+      h += '<div class="rl-find"><label for="rl-find-input">¿No sabes cuál es la tuya? Escribe tu modelo</label>' +
+        '<input id="rl-find-input" type="search" class="rl-input" autocomplete="off" placeholder="Ej. Hilux, Lobo, Sprinter" value="' + esc(st.search) + '">' +
+        '<div id="rl-find-results" class="rl-find-results" aria-live="polite">' + searchResults() + '</div></div>';
       h += '<div class="rl-opts">';
       VEH.forEach(function (v) {
         var min = (v.options || []).reduce(function (m, o) { return Math.min(m, o.price); }, Infinity);
-        h += card({ key: 'vehicle', value: v.id, title: v.name, price: v.fleet ? 'Precio especial' : 'desde ' + money(min), pressed: st.vehicle === v.id });
+        h += card({ key: 'vehicle', value: v.id, title: v.name, detail: v.examples || (v.fleet ? 'Precio especial por volumen' : ''), price: v.fleet ? '' : '<small>desde</small> ' + strike(min), pressed: st.vehicle === v.id });
       });
       return h + '</div>';
     },
     coverage: function () {
       var v = vehicle();
-      var h = header(v.group === 'van' ? '¿Qué parte de la caja quieres recubrir?' : '¿Qué quieres recubrir?', esc(v.name));
+      var h = header(v.group === 'van' ? '¿Qué parte de la caja quieres recubrir?' : '¿Qué quieres recubrir?', esc(v.name) + (v.examples ? ' · ' + esc(v.examples.replace(/^Ej\. /, '')) : ''));
       h += '<div class="rl-opts">';
       optionsFor(v).forEach(function (o) {
-        h += card({ key: 'option', value: o.id, title: o.name, detail: o.detail || (o.id === 'con-bordes' ? 'Caja completa + los bordes superiores' : o.id === 'sin-bordes' ? 'Caja completa, bordes sin recubrir' : ''), price: money(o.price), pressed: st.option === o.id });
+        h += card({ key: 'option', value: o.id, title: o.name, detail: o.detail || (o.id === 'con-bordes' ? 'Caja completa + los bordes superiores' : o.id === 'sin-bordes' ? 'Caja completa, bordes sin recubrir' : ''), price: strike(o.price), pressed: st.option === o.id });
       });
       return h + '</div>';
     },
@@ -202,24 +274,17 @@
       h += '</div>' + primary(st.extras.length ? 'Continuar' : 'No, continuar');
       return h;
     },
-    factura: function () {
-      var h = header('¿Necesitas factura?', 'Si la necesitas se agrega el 16% de IVA.');
-      h += '<div class="rl-opts">';
-      h += card({ key: 'factura', value: 'no', title: 'No necesito factura', pressed: st.factura === 'no' });
-      h += card({ key: 'factura', value: 'si', title: 'Sí, necesito factura', price: '+ IVA 16%', pressed: st.factura === 'si' });
-      return h + '</div>';
-    },
     summary: function () {
       var v = vehicle(), o = option(), q = quote();
       var rows = '<div class="rl-sum-row"><span>' + esc(o.name) + '<small>' + esc(v.name) + '</small></span><span>' + money(q.base) + '</span></div>';
       if (q.plastic) rows += '<div class="rl-sum-row"><span>Tratamiento de adherencia (plástico)</span><span>' + money(q.plastic) + '</span></div>';
-      if (st.factura === 'si') rows += '<div class="rl-sum-row rl-sum-muted"><span>Subtotal</span><span>' + money(q.subtotal) + '</span></div><div class="rl-sum-row rl-sum-muted"><span>IVA 16%</span><span>' + money(q.iva) + '</span></div>';
+      if (q.discount) rows += '<div class="rl-sum-row rl-sum-promo"><span>' + esc(PROMO.name) + ' · ' + PROMO.percent + '% de descuento<small>Instalando a más tardar el ' + esc(PROMO.lastDayText) + '</small></span><span>−' + money(q.discount) + '</span></div>';
       var notes = [];
-      if (st.material === 'no-se') notes.push('Si la caja o las piezas resultan ser de plástico, se agregan ' + money(PLASTIC) + (st.factura === 'si' ? ' + IVA' : '') + ' por el tratamiento de adherencia.');
+      if (st.material === 'no-se') notes.push('Si la caja o las piezas resultan ser de plástico, se agregan ' + money(PLASTIC) + ' por el tratamiento de adherencia.');
       if (st.extras.length) notes.push(esc(st.extras.join(' y ')) + ': se cotizan en el taller.');
       var h = header('Tu cotización', '');
       h += '<div class="rl-sum">' + rows +
-        '<div class="rl-sum-total"><span>Total' + (st.factura === 'si' ? ' con IVA' : '') + '</span><span>' + money(q.total) + ' <small>MXN</small></span></div></div>';
+        '<div class="rl-sum-total"><span>Total</span><span>' + (q.discount ? '<s class="rl-old">' + money(q.subtotal) + '</s> ' : '') + money(q.total) + ' <small>MXN</small></span></div></div>';
       if (notes.length) h += '<ul class="rl-sum-notes">' + notes.map(function (n) { return '<li>' + n + '</li>'; }).join('') + '</ul>';
       h += '<label class="rl-accept' + (st.accepted ? ' is-ok' : '') + '"><input type="checkbox" id="rl-accept"' + (st.accepted ? ' checked' : '') + '><span><strong>Acepto este precio</strong> de ' + money(q.total) + ' MXN para mi ' + esc(v.name.toLowerCase()) + '.</span></label>';
       h += primary('Elegir día y hora');
@@ -237,7 +302,7 @@
       var h = header('Elige día y hora', '');
       h += '<div class="rl-sched"><div class="rl-sched-label">Día</div><div class="rl-days">';
       nextDays().forEach(function (d) {
-        h += '<button type="button" class="rl-pill" data-key="day" data-value="' + d.iso + '" aria-pressed="' + (st.day && st.day.iso === d.iso ? 'true' : 'false') + '" aria-label="' + d.label + '"><span class="rl-dow">' + d.dow + '</span><span class="rl-num">' + d.num + '</span><span class="rl-mon">' + d.mon + '</span></button>';
+        h += '<button type="button" class="rl-pill" data-key="day" data-value="' + d.iso + '" aria-pressed="' + (st.day && st.day.iso === d.iso ? 'true' : 'false') + '" aria-label="' + d.label + '"><span class="rl-dow">' + d.dow + '</span><span class="rl-num">' + d.num + '</span><span class="rl-mon">' + d.mon + '</span>' + (!isFleet() && PROMO && PROMO.on() && PROMO.dayOk(d.iso) ? '<span class="rl-day-promo">−' + PROMO.percent + '%</span>' : '') + '</button>';
       });
       h += '</div><div class="rl-sched-label">Hora</div><div class="rl-times">';
       if (!st.day) h += '<p class="rl-q-sub" style="margin:0">Primero elige un día.</p>';
@@ -251,7 +316,8 @@
         '<label class="rl-field-wide">Marca, modelo y año <span class="rl-opt-detail">(opcional)</span><input id="rl-model" type="text" class="rl-input" placeholder="Ej. Toyota Tacoma 2023" value="' + esc(st.model) + '"></label>' +
         '</div>';
       var q = quote();
-      h += '<div class="rl-sched-total"><span>' + esc(isFleet() ? vehicle().name + ' · ' + (st.units || '') : vehicle().name + ' · ' + option().name) + '</span><strong>' + (isFleet() ? 'Precio especial' : money(q.total) + ' MXN') + '</strong></div>';
+      if (!isFleet() && st.day && PROMO && PROMO.on() && !PROMO.dayOk(st.day.iso)) h += '<p class="rl-sched-warn">La ' + esc(PROMO.name.toLowerCase()) + ' aplica instalando a más tardar el ' + esc(PROMO.lastDayText) + '. Elige un día marcado con −' + PROMO.percent + '% para conservar tu descuento.</p>';
+      h += '<div class="rl-sched-total"><span>' + esc(isFleet() ? vehicle().name + ' · ' + (st.units || '') : vehicle().name + ' · ' + option().name) + '</span><strong>' + (isFleet() ? 'Precio especial' : (q.discount ? '<s class="rl-old">' + money(q.subtotal) + '</s> ' : '') + money(q.total) + ' MXN') + '</strong></div>';
       h += '<button type="submit" id="rl-submit" class="rl-btn rl-q-primary">Confirmar mi cita</button>';
       return h;
     }
@@ -316,9 +382,6 @@
           if (i >= 0) st.extras.splice(i, 1); else st.extras.push(v);
           b.setAttribute('aria-pressed', i >= 0 ? 'false' : 'true');
           var nx = document.getElementById('rl-next'); if (nx) nx.textContent = st.extras.length ? 'Continuar' : 'No, continuar';
-        } else if (k === 'factura') {
-          if (st.factura !== v) st.accepted = false;
-          st.factura = v; go('summary');
         } else if (k === 'units') {
           st.units = v; go('schedule');
         } else if (k === 'day') {
@@ -334,7 +397,7 @@
     });
     var next = document.getElementById('rl-next');
     if (next) next.addEventListener('click', function () {
-      if (st.step === 'extras') return go('factura');
+      if (st.step === 'extras') return go('summary');
       if (st.step === 'summary') {
         if (!st.accepted) { var l = elStep.querySelector('.rl-accept'); if (l) l.classList.add('is-error'); return showError('Marca la casilla para aceptar el precio y continuar.'); }
         return go('schedule');
@@ -344,6 +407,19 @@
     if (acc) acc.addEventListener('change', function () {
       st.accepted = acc.checked;
       var l = acc.closest('.rl-accept'); l.classList.toggle('is-ok', acc.checked); l.classList.remove('is-error'); clearError();
+    });
+    var find = document.getElementById('rl-find-input');
+    if (find) find.addEventListener('input', function () {
+      st.search = find.value;
+      var box = document.getElementById('rl-find-results');
+      box.innerHTML = searchResults();
+      Array.prototype.forEach.call(box.querySelectorAll('[data-key]'), function (b) {
+        b.addEventListener('click', function () {
+          var v = b.getAttribute('data-value');
+          if (st.vehicle !== v) { st.option = null; st.accepted = false; st.units = null; }
+          st.vehicle = v; go(isFleet() ? 'units' : 'coverage');
+        });
+      });
     });
     ['rl-name', 'rl-phone'].forEach(function (id) {
       var f = document.getElementById(id);
@@ -382,7 +458,7 @@
 
     var v = vehicle(), o = option(), q = quote(), fleet = isFleet();
     var materialTxt = { metal: 'Metal', plastico: 'Plástico (+ tratamiento de adherencia)', 'no-se': 'No sabe (revisar en taller)' }[st.material] || '';
-    var precioTxt = fleet ? 'Precio especial por volumen' : money(q.total) + ' MXN' + (st.factura === 'si' ? ' con IVA' : ' sin IVA');
+    var precioTxt = fleet ? 'Precio especial por volumen' : money(q.total) + ' MXN' + (q.discount ? ' (incluye ' + PROMO.percent + '% de descuento, ' + PROMO.name.toLowerCase() + ')' : '');
     var origen = {};
     try { origen = JSON.parse(read('rl-origen') || '{}') || {}; } catch (err) {}
     var payload = {
@@ -394,9 +470,9 @@
       cobertura: fleet ? st.units : o.name,
       material: fleet ? '' : materialTxt,
       extras: st.extras.join(', '),
-      factura: fleet ? '' : (st.factura === 'si' ? 'Sí' : 'No'),
       subtotal: fleet ? '' : q.subtotal,
-      iva: fleet ? '' : q.iva,
+      descuento: fleet || !q.discount ? '' : q.discount,
+      promocion: fleet || !q.discount ? '' : PROMO.name + ' ' + PROMO.percent + '%',
       total: fleet ? '' : q.total,
       precio: precioTxt,
       precio_monto: fleet ? '' : q.total,
@@ -411,6 +487,7 @@
       enviado: new Date().toISOString()
     };
     var notes = [];
+    if (!fleet && q.discount) notes.push('Incluye ' + PROMO.percent + '% de descuento de la ' + PROMO.name.toLowerCase() + ' (ahorras ' + money(q.discount) + ').');
     if (st.material === 'no-se') notes.push('Si la caja resulta ser de plástico se agregan ' + money(PLASTIC) + ' por tratamiento de adherencia.');
     if (st.extras.length) notes.push(st.extras.join(' y ') + ': se cotizan en el taller.');
     store('rl-cita', JSON.stringify({

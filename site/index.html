@@ -41,6 +41,11 @@
 
 <!-- HEADER -->
 <header style="position: sticky; top: 0; z-index: 10; background: rgba(17,17,17,0.94); border-bottom: 1px solid #262626">
+<a href="#agendar" class="rl-promo-bar" data-promo hidden>
+<span class="rl-promo-tag">Promo octubre</span>
+<span class="rl-promo-msg"><strong>10% de descuento</strong><span class="rl-promo-long"> instalando este mes</span></span>
+<span class="rl-promo-clock"><span class="rl-promo-long">Termina en </span><span data-countdown></span></span>
+</a>
 <div style="max-width: 1240px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: nowrap; gap: 16px; justify-content: space-between; align-items: center">
 <a href="#inicio" aria-label="Rhino Linings Guadalajara, inicio" style="text-decoration: none; display: flex; align-items: center; gap: 12px; flex: none">
 <img class="rl-logo-full" src="assets/img/logo-rhino-blanco.png" alt="" style="height: 30px; width: auto">
@@ -89,7 +94,7 @@
 <h1 class="load d2 rl-h1" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(44px, 5.2vw, 72px); line-height: 0.95; letter-spacing: -0.01em; text-transform: uppercase; margin: 0 0 16px">Tu pickup trabaja duro.<br>Protégela de verdad.</h1>
 <p class="load d3 rl-hero-p" style="font-size: 17px; color: #CFCAC0; max-width: 580px; margin: 0 0 20px">Recubrimiento Rhino Linings® aplicado por especialistas en Guadalajara. Protección contra golpes, rayones, humedad, corrosión y químicos, con un acabado de fábrica que no se mueve, no se despega y no acumula agua.</p>
 <div class="load d4 rl-hero-price" style="display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline; margin: 0 0 20px">
-<div><span style="font-size: 14px; color: #A8A397; margin-right: 8px">Pickups desde</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 40px; line-height: 1">$9,000</span><span style="font-size: 14px; color: #A8A397; margin-left: 6px">MXN</span></div>
+<div><span style="font-size: 14px; color: #A8A397; margin-right: 8px">Pickups desde</span><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 40px; line-height: 1" data-price="9000">$9,000</span><span style="font-size: 14px; color: #A8A397; margin-left: 6px">MXN</span></div>
 <div style="font-size: 16px; color: #CFCAC0">Lista en <strong style="color: #F4F1EA">24 horas</strong></div>
 </div>
 <div class="load d5 rl-hero-btns" style="display: flex; gap: 14px; margin-bottom: 24px; max-width: 580px">
@@ -324,33 +329,38 @@
 <h2 class="reveal" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(36px, 4.6vw, 58px); line-height: 1; text-transform: uppercase; margin: 0 0 14px">Conoce tu precio antes de venir</h2>
 <p style="font-size: 18px; color: #3D3A34; margin: 0">Precio exacto según tu vehículo y lo que quieres recubrir. Sin cotizaciones sorpresa.</p>
 </div>
-<div style="font-size: 14px; color: #5A564E; max-width: 300px">Precios en MXN, sin IVA. Si necesitas factura se agrega el 16%.</div>
+<div class="rl-promo-box" data-promo hidden><div class="rl-promo-box-t">Promoción de octubre · 10% de descuento</div><div>Instalando a más tardar el 31 de octubre. Termina en <span data-countdown></span></div></div>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 14px; margin-bottom: 24px">
 <div class="reveal" style="background: #FFFFFF; border: 1px solid #D6D1C6; border-radius: 6px; padding: 24px 22px; display: flex; flex-direction: column; gap: 6px">
 <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6B665C">Van corta</div>
 <h3 style="font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 700; text-transform: uppercase; margin: 0 0 4px">Caja cerrada</h3>
-<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Solo piso</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$8,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Piso + salpicaderas</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$8,500</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Interior completo</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$12,000</span></div></div>
+<div class="rl-examples">Ej. Sprinter, Transit o Promaster corta, Partner</div>
+<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Solo piso</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="8000">$8,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Piso + salpicaderas</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="8500">$8,500</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Interior completo</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="12000">$12,000</span></div></div>
 </div>
 <div class="reveal" style="background: #FFFFFF; border: 1px solid #D6D1C6; border-radius: 6px; padding: 24px 22px; display: flex; flex-direction: column; gap: 6px">
 <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6B665C">Van larga</div>
 <h3 style="font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 700; text-transform: uppercase; margin: 0 0 4px">Caja cerrada</h3>
-<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Solo piso</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$9,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Piso + salpicaderas</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$9,500</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Interior completo</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$14,000</span></div></div>
+<div class="rl-examples">Ej. Sprinter, Transit o Promaster larga, Urvan</div>
+<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Solo piso</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="9000">$9,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Piso + salpicaderas</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="9500">$9,500</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Interior completo</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="14000">$14,000</span></div></div>
 </div>
-<div class="reveal" style="background: #161616; color: #F4F1EA; border-radius: 6px; padding: 24px 22px; display: flex; flex-direction: column; gap: 6px">
+<div class="reveal rl-dark" style="background: #161616; color: #F4F1EA; border-radius: 6px; padding: 24px 22px; display: flex; flex-direction: column; gap: 6px">
 <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #CFCAC0">Más solicitado</div>
 <h3 style="font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 700; text-transform: uppercase; margin: 0 0 4px">Pickup caja corta</h3>
-<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #2E2E2E"><span style="font-size: 14px; color: #A8A397">Sin bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$9,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #2E2E2E"><span style="font-size: 14px; color: #A8A397">Con bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$9,500</span></div></div>
+<div class="rl-examples">Ej. Hilux, Tacoma, NP300, Ranger de doble cabina</div>
+<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #2E2E2E"><span style="font-size: 14px; color: #A8A397">Sin bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="9000">$9,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #2E2E2E"><span style="font-size: 14px; color: #A8A397">Con bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="9500">$9,500</span></div></div>
 </div>
 <div class="reveal" style="background: #FFFFFF; border: 1px solid #D6D1C6; border-radius: 6px; padding: 24px 22px; display: flex; flex-direction: column; gap: 6px">
 <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6B665C">Pickup</div>
 <h3 style="font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 700; text-transform: uppercase; margin: 0 0 4px">Estándar</h3>
-<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Sin bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$10,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Con bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$10,500</span></div></div>
+<div class="rl-examples">Ej. NP300, Hilux, L200 de cabina sencilla</div>
+<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Sin bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="10000">$10,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Con bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="10500">$10,500</span></div></div>
 </div>
 <div class="reveal" style="background: #FFFFFF; border: 1px solid #D6D1C6; border-radius: 6px; padding: 24px 22px; display: flex; flex-direction: column; gap: 6px">
 <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6B665C">Pickup</div>
 <h3 style="font-family: 'Barlow Condensed', sans-serif; font-size: 24px; font-weight: 700; text-transform: uppercase; margin: 0 0 4px">Full size / caja americana</h3>
-<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Sin bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$11,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Con bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1">$11,500</span></div></div>
+<div class="rl-examples">Ej. Lobo, Silverado, RAM 1500, Tundra, Sierra</div>
+<div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Sin bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="11000">$11,000</span></div><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-top: 1px solid #EEEAE2"><span style="font-size: 14px; color: #5A564E">Con bordes</span><span style="font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1" data-price="11500">$11,500</span></div></div>
 </div>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 28px; background: #FFFFFF; border: 1px solid #D6D1C6; border-radius: 6px; padding: 26px 28px">
@@ -362,7 +372,7 @@
 </div>
 <div style="flex: 1 1 300px; min-width: 0; font-size: 15px; color: #3D3A34; display: flex; flex-direction: column; gap: 8px">
 <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 2px; color: #161616">Otros casos</h3>
-<div><strong style="color: #161616">Solo bordes · $4,000.</strong> Si tu caja ya trae recubrimiento de agencia.</div>
+<div><strong style="color: #161616">Solo bordes · <span data-price="4000">$4,000</span>.</strong> Si tu caja ya trae recubrimiento de agencia.</div>
 <div><strong style="color: #161616">Caja o piezas de plástico · + $1,500.</strong> Tratamiento de adherencia.</div>
 <div><strong style="color: #161616">Estribos y facias:</strong> se cotizan al ver tu camioneta.</div>
 </div>
@@ -377,7 +387,7 @@
 <h2 class="reveal" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(36px, 4.6vw, 58px); line-height: 1; text-transform: uppercase; margin: 0 0 36px">Preguntas frecuentes</h2>
 <details class="reveal" style="border-top: 1px solid #333; padding: 20px 0">
 <summary style="cursor: pointer; font-size: 18px; font-weight: 600">¿Cuánto cuesta?</summary>
-<p style="margin: 12px 0 0; color: #B8B3A8">Pickups de $9,000 a $11,500 según el tamaño de la caja y si lleva bordes; vans de $8,000 a $14,000 según si es solo piso, piso con salpicaderas o interior completo. Usa el cotizador para ver tu precio exacto. Precios sin IVA; si necesitas factura se agrega el 16%.</p>
+<p style="margin: 12px 0 0; color: #B8B3A8">Pickups de $9,000 a $11,500 según el tamaño de la caja y si lleva bordes; vans de $8,000 a $14,000 según si es solo piso, piso con salpicaderas o interior completo. Usa el cotizador para ver tu precio exacto.</p>
 </details>
 <details class="reveal" style="border-top: 1px solid #333; padding: 20px 0">
 <summary style="cursor: pointer; font-size: 18px; font-weight: 600">¿Cuánto tiempo tarda la aplicación?</summary>
@@ -443,6 +453,7 @@
 <div style="display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #B8B3A8; margin-bottom: 16px"><span style="width: 28px; height: 3px; background: #C8201A"></span>Cotizador</div>
 <h2 class="reveal" style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(40px, 5vw, 66px); line-height: 0.98; text-transform: uppercase; margin: 0 0 18px">Cotiza y agenda en 1 minuto</h2>
 <p style="font-size: 18px; color: #CFCAC0; margin: 0 0 32px">Elige tu vehículo y lo que quieres proteger. Ves tu precio exacto y apartas tu lugar en el taller.</p>
+<div class="rl-promo-box rl-promo-dark" data-promo hidden><div class="rl-promo-box-t">10% de descuento instalando en octubre</div><div>Ya aparece aplicado en tu cotización. Termina en <span data-countdown></span></div></div>
 <div style="display: flex; flex-direction: column; gap: 14px; font-size: 15px; color: #B8B3A8">
 <div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F4F1EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Precio exacto antes de agendar</span></div>
 <div style="display: flex; gap: 12px; align-items: flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F4F1EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 2px"><path d="M5 12l5 5L20 7"></path></svg><span>Tu lugar queda apartado al instante</span></div>

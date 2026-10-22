@@ -108,7 +108,9 @@ Los push a `main` siguen publicando solo en staging. Producción siempre es manu
 
 ## 6. Cambios frecuentes
 
-- **Precios (más IVA):** en `site/assets/js/config.js` (agendador) **y** en el texto de `site/index.html` (hero, sección de precios y preguntas frecuentes).
+- **Precios (finales, el sitio no menciona IVA):** en `site/assets/js/config.js` (cotizador) **y** en el texto de `site/index.html` (hero, sección de precios y preguntas frecuentes).
+- **Promoción:** `promo` en `config.js` (porcentaje, fecha de inicio y fin). La franja roja, el contador y los precios tachados aparecen solos dentro de esas fechas y desaparecen al terminar. Para quitarla antes: `active: false`.
+- **Modelos de ejemplo por tipo de vehículo:** `examples` y `models` en `config.js` (alimentan el buscador del cotizador).
 - **Horarios de citas:** `slots` en `config.js`.
 - **Textos:** directamente en `site/index.html`.
 - **Fotos:** en `site/assets/img/`. Mantén el mismo nombre de archivo o actualiza el `src` en `index.html`. Tamaño recomendado: máx. 1600 px de ancho y menos de 300 KB.

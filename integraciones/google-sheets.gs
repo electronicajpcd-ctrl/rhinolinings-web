@@ -45,7 +45,9 @@ var COLUMNAS = [
   ['factura', 'Factura'],
   ['subtotal', 'Subtotal'],
   ['iva', 'IVA'],
-  ['total', 'Total']
+  ['total', 'Total'],
+  ['descuento', 'Descuento'],
+  ['promocion', 'Promoción']
 ];
 
 function doPost(e) {
