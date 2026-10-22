@@ -197,3 +197,19 @@ a:active,button:active{transform:translateY(1px)}
   .rl-opt:not(.rl-opt-multi) .rl-opt-arrow{grid-column:2;grid-row:1 / span 2}
   .rl-sched-total{flex-direction:column;align-items:flex-start;gap:4px}
 }
+/* Tarjetas de precio (solo "desde") */
+.rl-pcard{background:#FFFFFF;border:1px solid #D6D1C6;border-radius:6px;padding:24px 22px;display:flex;flex-direction:column;gap:6px}
+.rl-pcard.rl-dark{background:#161616;color:#F4F1EA;border-color:#161616}
+.rl-pcard-lab{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6B665C}
+.rl-dark .rl-pcard-lab{color:#CFCAC0}
+.rl-pcard-t{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;text-transform:uppercase;margin:0;line-height:1.15}
+.rl-pcard-price{margin-top:auto;padding-top:16px;border-top:1px solid #EEEAE2;display:flex;flex-direction:column;gap:2px}
+.rl-dark .rl-pcard-price{border-color:#2E2E2E}
+.rl-pcard-from{font-size:13px;color:#6B665C}
+.rl-dark .rl-pcard-from{color:#A8A397}
+.rl-pcard-num{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:800;line-height:1;white-space:nowrap}
+.rl-pcard-num .rl-old{display:block;font-size:20px;margin:0 0 2px}
+.rl-pcard-cta{margin-top:14px;display:flex;align-items:center;justify-content:center;min-height:46px;border:1px solid #161616;border-radius:4px;color:#161616;text-decoration:none;font-weight:600;font-size:15px;padding:10px 14px;text-align:center}
+.rl-pcard-cta:hover{background:#161616;color:#FFFFFF}
+.rl-dark .rl-pcard-cta{background:#C8201A;border-color:#C8201A;color:#FFFFFF}
+.rl-dark .rl-pcard-cta:hover{background:#B01B16}

@@ -197,7 +197,7 @@
     var r = searchModels(q);
     if (!r.length) return '<p class="rl-find-none">No lo encontramos. Elige abajo el más parecido; lo confirmamos en el taller.</p>';
     return r.map(function (x) {
-      return '<button type="button" class="rl-find-hit" data-key="vehicle" data-value="' + x.v.id + '"><span>' + esc(x.model) + '</span><span class="rl-find-cat">' + esc(x.v.name) + ' →</span></button>';
+      return '<button type="button" class="rl-find-hit" data-key="vehicle" data-value="' + x.v.id + '" data-model="' + esc(x.model) + '"><span>' + esc(x.model) + '</span><span class="rl-find-cat">' + esc(x.v.name) + ' →</span></button>';
     }).join('');
   }
 
@@ -313,11 +313,10 @@
       h += '<div class="rl-fields">' +
         '<label>Nombre<input id="rl-name" type="text" autocomplete="name" class="rl-input" placeholder="Tu nombre" value="' + esc(st.name) + '"></label>' +
         '<label>WhatsApp<input id="rl-phone" type="tel" inputmode="tel" autocomplete="tel" class="rl-input" placeholder="33 0000 0000" value="' + esc(st.phone) + '"></label>' +
-        '<label class="rl-field-wide">Marca, modelo y año <span class="rl-opt-detail">(opcional)</span><input id="rl-model" type="text" class="rl-input" placeholder="Ej. Toyota Tacoma 2023" value="' + esc(st.model) + '"></label>' +
         '</div>';
       var q = quote();
       if (!isFleet() && st.day && PROMO && PROMO.on() && !PROMO.dayOk(st.day.iso)) h += '<p class="rl-sched-warn">La ' + esc(PROMO.name.toLowerCase()) + ' aplica instalando a más tardar el ' + esc(PROMO.lastDayText) + '. Elige un día marcado con −' + PROMO.percent + '% para conservar tu descuento.</p>';
-      h += '<div class="rl-sched-total"><span>' + esc(isFleet() ? vehicle().name + ' · ' + (st.units || '') : vehicle().name + ' · ' + option().name) + '</span><strong>' + (isFleet() ? 'Precio especial' : (q.discount ? '<s class="rl-old">' + money(q.subtotal) + '</s> ' : '') + money(q.total) + ' MXN') + '</strong></div>';
+      h += '<div class="rl-sched-total"><span>' + esc(isFleet() ? vehicle().name + ' · ' + (st.units || '') : (st.model || vehicle().name) + ' · ' + option().name) + '</span><strong>' + (isFleet() ? 'Precio especial' : (q.discount ? '<s class="rl-old">' + money(q.subtotal) + '</s> ' : '') + money(q.total) + ' MXN') + '</strong></div>';
       h += '<button type="submit" id="rl-submit" class="rl-btn rl-q-primary">Confirmar mi cita</button>';
       return h;
     }
@@ -360,8 +359,8 @@
   }
 
   function keepFields() {
-    var n = document.getElementById('rl-name'), p = document.getElementById('rl-phone'), m = document.getElementById('rl-model');
-    if (n) st.name = n.value; if (p) st.phone = p.value; if (m) st.model = m.value;
+    var n = document.getElementById('rl-name'), p = document.getElementById('rl-phone');
+    if (n) st.name = n.value; if (p) st.phone = p.value;
   }
 
   function bind() {
@@ -369,6 +368,7 @@
       b.addEventListener('click', function () {
         var k = b.getAttribute('data-key'), v = b.getAttribute('data-value');
         if (k === 'vehicle') {
+          st.model = b.getAttribute('data-model') || '';
           if (st.vehicle !== v) { st.option = null; st.accepted = false; st.units = null; }
           st.vehicle = v; go(isFleet() ? 'units' : 'coverage');
         } else if (k === 'option') {
@@ -416,6 +416,7 @@
       Array.prototype.forEach.call(box.querySelectorAll('[data-key]'), function (b) {
         b.addEventListener('click', function () {
           var v = b.getAttribute('data-value');
+          st.model = b.getAttribute('data-model') || '';
           if (st.vehicle !== v) { st.option = null; st.accepted = false; st.units = null; }
           st.vehicle = v; go(isFleet() ? 'units' : 'coverage');
         });
