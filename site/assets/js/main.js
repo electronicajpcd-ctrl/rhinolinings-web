@@ -185,11 +185,11 @@
     var out = [];
     VEH.forEach(function (v) {
       (v.models || []).forEach(function (m) {
-        var n = ' ' + norm(m) + ' ';
-        if (words.every(function (w) { return n.indexOf(w) >= 0; })) out.push({ model: m, v: v });
+        var n = ' ' + norm(m) + ' ', n2 = n.replace(/ /g, '');
+        if (words.every(function (w) { return n.indexOf(w) >= 0 || n2.indexOf(w) >= 0; })) out.push({ model: m, v: v });
       });
     });
-    return out.slice(0, 6);
+    return out.slice(0, 8);
   }
   function searchResults() {
     var q = st.search.trim();
@@ -468,6 +468,7 @@
       nombre: st.name.trim(),
       whatsapp: st.phone.replace(/\D/g, ''),
       modelo: st.model.trim(),
+      busqueda: !st.modelSearched && st.search.trim() ? st.search.trim() + (searchModels(st.search).length ? '' : ' (no encontrado)') : '',
       urgencia: '',
       vehiculo: v.name,
       cobertura: fleet ? st.units : o.name,

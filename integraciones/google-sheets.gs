@@ -47,7 +47,8 @@ var COLUMNAS = [
   ['iva', 'IVA'],
   ['total', 'Total'],
   ['descuento', 'Descuento'],
-  ['promocion', 'Promoción']
+  ['promocion', 'Promoción'],
+  ['busqueda', 'Modelo buscado']
 ];
 
 function doPost(e) {

@@ -98,6 +98,7 @@ $d = [
     'total'           => preg_replace('/[^0-9.]/', '', field('total', 12)),
     'descuento'       => preg_replace('/[^0-9.]/', '', field('descuento', 12)),
     'promocion'       => field('promocion', 80),
+    'busqueda'        => field('busqueda', 80),
 ];
 
 // Validación mínima.
@@ -126,6 +127,7 @@ $lines = [
     'WhatsApp:    ' . $d['whatsapp'] . '  →  https://wa.me/' . $wa,
     'Vehículo:    ' . $d['vehiculo'] . ($d['modelo'] !== '' ? ' (' . $d['modelo'] . ')' : ''),
 ];
+if ($d['busqueda'] !== '') { $lines[] = 'Buscó:       ' . $d['busqueda']; }
 if ($d['cobertura'] !== '') { $lines[] = 'Servicio:    ' . $d['cobertura']; }
 if ($d['material'] !== '')  { $lines[] = 'Material:    ' . $d['material']; }
 if ($d['extras'] !== '')    { $lines[] = 'Extras:      ' . $d['extras'] . ' (cotizar en taller)'; }

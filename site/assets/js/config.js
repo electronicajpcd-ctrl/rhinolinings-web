@@ -28,7 +28,7 @@ window.RL_CONFIG = {
       {
         id: 'pickup-full', group: 'pickup', name: 'Pickup full size / caja americana',
         examples: 'Ej. Lobo, Silverado, RAM 1500, Tundra, Sierra',
-        models: ['Ford Lobo', 'Ford F-150', 'Ford F-250', 'Chevrolet Silverado', 'Chevrolet Cheyenne', 'GMC Sierra', 'RAM 1500', 'RAM 2500', 'Toyota Tundra', 'Nissan Titan'],
+        models: ['Ford Lobo', 'Ford F-150', 'Ford F-150 Raptor', 'Ford F-150 Lightning', 'Ford F-250 Super Duty', 'Ford F-350 Super Duty', 'Chevrolet Silverado', 'Chevrolet Silverado 2500 HD', 'Chevrolet Silverado 3500 HD', 'Chevrolet Cheyenne', 'Chevrolet Avalanche', 'GMC Sierra', 'GMC Sierra Denali', 'GMC Sierra HD', 'RAM 1500', 'RAM 2500', 'RAM 3500', 'Dodge RAM', 'Toyota Tundra', 'Nissan Titan', 'Nissan Titan XD'],
         options: [
           { id: 'sin-bordes', name: 'Caja sin bordes', price: 11000 },
           { id: 'con-bordes', name: 'Caja con bordes', price: 11500 }
@@ -37,7 +37,7 @@ window.RL_CONFIG = {
       {
         id: 'pickup-estandar', group: 'pickup', name: 'Pickup estándar',
         examples: 'Ej. NP300, Hilux, L200 de cabina sencilla',
-        models: ['Nissan NP300 cabina sencilla', 'Toyota Hilux cabina sencilla', 'Mitsubishi L200 cabina sencilla', 'Chevrolet S10 cabina sencilla', 'Ford Ranger cabina sencilla', 'Isuzu D-Max cabina sencilla'],
+        models: ['Nissan NP300 cabina sencilla (estaquitas)', 'Toyota Hilux cabina sencilla', 'Mitsubishi L200 cabina sencilla', 'Chevrolet S10 cabina sencilla', 'Chevrolet S10 Max cabina sencilla', 'Ford Ranger cabina sencilla', 'Isuzu D-Max cabina sencilla', 'JAC T6 cabina sencilla', 'Foton Tunland cabina sencilla', 'Great Wall Wingle cabina sencilla'],
         options: [
           { id: 'sin-bordes', name: 'Caja sin bordes', price: 10000 },
           { id: 'con-bordes', name: 'Caja con bordes', price: 10500 }
@@ -46,7 +46,7 @@ window.RL_CONFIG = {
       {
         id: 'pickup-corta', group: 'pickup', name: 'Pickup caja corta',
         examples: 'Ej. Hilux, Tacoma, NP300, Ranger de doble cabina',
-        models: ['Toyota Hilux doble cabina', 'Toyota Tacoma', 'Nissan NP300 doble cabina', 'Nissan Frontier', 'Ford Ranger doble cabina', 'Mitsubishi L200 doble cabina', 'Chevrolet Colorado', 'Chevrolet S10 doble cabina', 'Mazda BT-50', 'Volkswagen Amarok', 'Isuzu D-Max doble cabina', 'Ford Maverick', 'RAM 700', 'Chevrolet Tornado', 'Fiat Strada'],
+        models: ['Toyota Hilux doble cabina', 'Toyota Hilux GR Sport', 'Toyota Tacoma', 'Nissan NP300 doble cabina', 'Nissan Frontier', 'Nissan Navara', 'Ford Ranger doble cabina', 'Ford Ranger Raptor', 'Mitsubishi L200 doble cabina', 'Chevrolet Colorado', 'Chevrolet S10 doble cabina', 'Chevrolet S10 Max doble cabina', 'Mazda BT-50', 'Volkswagen Amarok', 'Isuzu D-Max doble cabina', 'Jeep Gladiator', 'Dodge Dakota', 'JAC T6 doble cabina', 'JAC T8 (Frison)', 'JAC T9', 'GWM Poer', 'GWM Cannon', 'Great Wall Wingle doble cabina', 'Foton Tunland doble cabina', 'Changan Hunter', 'Peugeot Landtrek', 'Kia Tasman', 'Ford Maverick', 'Hyundai Santa Cruz', 'Renault Oroch', 'RAM 700', 'Chevrolet Tornado', 'Fiat Strada', 'Volkswagen Saveiro (Saverio)', 'Ford Courier'],
         options: [
           { id: 'sin-bordes', name: 'Caja sin bordes', price: 9000 },
           { id: 'con-bordes', name: 'Caja con bordes', price: 9500 }
@@ -55,7 +55,7 @@ window.RL_CONFIG = {
       {
         id: 'van-larga', group: 'van', name: 'Van larga (caja cerrada)',
         examples: 'Ej. Sprinter, Transit, Promaster larga',
-        models: ['Mercedes-Benz Sprinter larga', 'Ford Transit larga', 'RAM Promaster larga', 'Nissan Urvan', 'Toyota Hiace', 'Peugeot Boxer', 'Renault Master'],
+        models: ['Mercedes-Benz Sprinter larga', 'Mercedes-Benz Sprinter extra larga', 'Ford Transit larga', 'RAM Promaster larga', 'Nissan Urvan (NV350)', 'Toyota Hiace', 'Peugeot Boxer', 'Peugeot Manager', 'Fiat Ducato', 'Renault Master', 'Volkswagen Crafter', 'Iveco Daily', 'JAC Sunray', 'Foton View', 'Chevrolet Express extendida', 'Ford Econoline extendida'],
         options: [
           { id: 'piso', name: 'Solo piso', price: 9000 },
           { id: 'piso-salpicaderas', name: 'Piso + salpicaderas', detail: 'Incluye los cubre-llantas interiores', price: 9500 },
@@ -65,7 +65,7 @@ window.RL_CONFIG = {
       {
         id: 'van-corta', group: 'van', name: 'Van corta (caja cerrada)',
         examples: 'Ej. Sprinter, Transit, Promaster corta, Partner',
-        models: ['Mercedes-Benz Sprinter corta', 'Ford Transit corta', 'RAM Promaster corta', 'Ford Transit Connect', 'Peugeot Partner', 'Renault Kangoo', 'Chevrolet Express', 'Nissan NV200', 'Volkswagen Caddy', 'RAM Promaster Rapid'],
+        models: ['Mercedes-Benz Sprinter corta', 'Ford Transit corta', 'RAM Promaster corta', 'Chevrolet Express', 'Ford Econoline', 'Ford Transit Connect', 'RAM Promaster Rapid', 'Peugeot Partner', 'Peugeot Expert', 'Citroën Berlingo', 'Renault Kangoo', 'Renault Trafic', 'Nissan NV200', 'Volkswagen Caddy', 'Volkswagen Transporter', 'Chevrolet Tornado Van', 'Hyundai H1 / Staria Cargo'],
         options: [
           { id: 'piso', name: 'Solo piso', price: 8000 },
           { id: 'piso-salpicaderas', name: 'Piso + salpicaderas', detail: 'Incluye los cubre-llantas interiores', price: 8500 },
