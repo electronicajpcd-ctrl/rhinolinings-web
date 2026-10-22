@@ -136,7 +136,7 @@
   var mons = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
   var st = {
-    vehicle: null, option: null, material: null, extras: [], search: '',
+    vehicle: null, option: null, material: null, extras: [], search: '', modelSearched: false,
     units: null, accepted: false, day: null, time: null,
     name: '', phone: '', model: '', step: 'vehicle', history: []
   };
@@ -313,10 +313,11 @@
       h += '<div class="rl-fields">' +
         '<label>Nombre<input id="rl-name" type="text" autocomplete="name" class="rl-input" placeholder="Tu nombre" value="' + esc(st.name) + '"></label>' +
         '<label>WhatsApp<input id="rl-phone" type="tel" inputmode="tel" autocomplete="tel" class="rl-input" placeholder="33 0000 0000" value="' + esc(st.phone) + '"></label>' +
+        (st.modelSearched ? '' : '<label class="rl-field-wide">Marca, modelo y año<input id="rl-model" type="text" class="rl-input" placeholder="Ej. Toyota Tacoma 2023" value="' + esc(st.model) + '"></label>') +
         '</div>';
       var q = quote();
       if (!isFleet() && st.day && PROMO && PROMO.on() && !PROMO.dayOk(st.day.iso)) h += '<p class="rl-sched-warn">La ' + esc(PROMO.name.toLowerCase()) + ' aplica instalando a más tardar el ' + esc(PROMO.lastDayText) + '. Elige un día marcado con −' + PROMO.percent + '% para conservar tu descuento.</p>';
-      h += '<div class="rl-sched-total"><span>' + esc(isFleet() ? vehicle().name + ' · ' + (st.units || '') : (st.model || vehicle().name) + ' · ' + option().name) + '</span><strong>' + (isFleet() ? 'Precio especial' : (q.discount ? '<s class="rl-old">' + money(q.subtotal) + '</s> ' : '') + money(q.total) + ' MXN') + '</strong></div>';
+      h += '<div class="rl-sched-total"><span>' + esc(isFleet() ? vehicle().name + ' · ' + (st.units || '') : (st.modelSearched ? st.model : vehicle().name) + ' · ' + option().name) + '</span><strong>' + (isFleet() ? 'Precio especial' : (q.discount ? '<s class="rl-old">' + money(q.subtotal) + '</s> ' : '') + money(q.total) + ' MXN') + '</strong></div>';
       h += '<button type="submit" id="rl-submit" class="rl-btn rl-q-primary">Confirmar mi cita</button>';
       return h;
     }
@@ -359,8 +360,8 @@
   }
 
   function keepFields() {
-    var n = document.getElementById('rl-name'), p = document.getElementById('rl-phone');
-    if (n) st.name = n.value; if (p) st.phone = p.value;
+    var n = document.getElementById('rl-name'), p = document.getElementById('rl-phone'), m = document.getElementById('rl-model');
+    if (n) st.name = n.value; if (p) st.phone = p.value; if (m) st.model = m.value;
   }
 
   function bind() {
@@ -368,7 +369,7 @@
       b.addEventListener('click', function () {
         var k = b.getAttribute('data-key'), v = b.getAttribute('data-value');
         if (k === 'vehicle') {
-          st.model = b.getAttribute('data-model') || '';
+          st.model = b.getAttribute('data-model') || ''; st.modelSearched = !!st.model;
           if (st.vehicle !== v) { st.option = null; st.accepted = false; st.units = null; }
           st.vehicle = v; go(isFleet() ? 'units' : 'coverage');
         } else if (k === 'option') {
@@ -416,13 +417,13 @@
       Array.prototype.forEach.call(box.querySelectorAll('[data-key]'), function (b) {
         b.addEventListener('click', function () {
           var v = b.getAttribute('data-value');
-          st.model = b.getAttribute('data-model') || '';
+          st.model = b.getAttribute('data-model') || ''; st.modelSearched = !!st.model;
           if (st.vehicle !== v) { st.option = null; st.accepted = false; st.units = null; }
           st.vehicle = v; go(isFleet() ? 'units' : 'coverage');
         });
       });
     });
-    ['rl-name', 'rl-phone'].forEach(function (id) {
+    ['rl-name', 'rl-phone', 'rl-model'].forEach(function (id) {
       var f = document.getElementById(id);
       if (f) f.addEventListener('input', function () { f.removeAttribute('aria-invalid'); });
     });
@@ -456,6 +457,7 @@
     if (!st.day || !st.time) return showError('Elige un día y una hora.');
     if (st.name.trim().length < 2) return showError('Escribe tu nombre.', document.getElementById('rl-name'));
     if (st.phone.replace(/\D/g, '').length < 10) return showError('Escribe tu WhatsApp a 10 dígitos.', document.getElementById('rl-phone'));
+    if (!st.modelSearched && st.model.trim().length < 3) return showError('Escribe la marca y modelo de tu vehículo.', document.getElementById('rl-model'));
 
     var v = vehicle(), o = option(), q = quote(), fleet = isFleet();
     var materialTxt = { metal: 'Metal', plastico: 'Plástico (+ tratamiento de adherencia)', 'no-se': 'No sabe (revisar en taller)' }[st.material] || '';
@@ -509,7 +511,7 @@
     a.addEventListener('click', function () {
       var id = a.getAttribute('data-quote-vehicle');
       if (VEH.some(function (v) { return v.id === id; })) {
-        st.history = []; st.vehicle = id; st.step = 'vehicle';
+        st.history = []; st.vehicle = id; st.step = 'vehicle'; st.model = ''; st.modelSearched = false;
         go(isFleet() ? 'units' : 'coverage');
       }
     });
